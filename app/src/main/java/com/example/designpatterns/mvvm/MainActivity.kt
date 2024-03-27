@@ -1,4 +1,4 @@
-package com.example.designpatterns
+package com.example.designpatterns.mvvm
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -28,11 +28,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
     private fun add() {
+
+
 //        num++
 //        bind.text.setText(num.toString())
-
         vm.addNum()
         bind.text.text = vm.number.toString()
 
