@@ -33,8 +33,7 @@ class view : AppCompatActivity() {
     fun printDetails(studentName: String, studentRoll: String) {
 
         Log.d("TAG------->", studentName)
-
-    //      bind.name.text = studentName
+        bind.name.setText(studentName)
 //       bind.no.text=studentRoll
 
 
