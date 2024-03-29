@@ -7,11 +7,13 @@ import com.example.designpatterns.databinding.ActivityBasicBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import kotlin.system.measureTimeMillis
 
 class Basic : AppCompatActivity() {
 
@@ -21,83 +23,69 @@ class Basic : AppCompatActivity() {
         bind = ActivityBasicBinding.inflate(layoutInflater)
         setContentView(bind.root)
 
+//        GlobalScope.launch {
+////            Log.d("GLobal0-------->", "GLobal")
+////            delay(1000)
+////            Log.d("GLobal0.1-------->", "GLobal")
+//                // infinite loop
+//                while (true) {
+//                    delay(1000)
+//                    Log.d("1--------->", "Still Running..")
+//                }
+//        }
 
-       //  doCall()         can't call a suspend method
-      //  gives an error as that is coroutine method , should call inside launch method
+        GlobalScope.launch {
+            val time = measureTimeMillis {
+                val ans1 = doCall1()
+                val ans2 = doCall2()
 
-        runBlocking {
-            Log.d("runblocking", doCall())
+                val job1 = launch {
+                    Log.d("ANS1----------->", ans1)
+                }
+                val job2 = launch {
+                    Log.d("ANS2---------->", ans2)
+                }
+
+//                val job1=async {doCall1()}
+//                val job2=async {doCall2()}
+//
+//                Log.d("By Await--------------->", job1.await())
+//                Log.d("By Await--------------->", job2.await())
+
+                job1.join()
+                job2.join()
+
+            }
+
+            Log.d("GLobal1-------->", time.toString())
         }
 
-
-        Log.d("MAinThread--------------->>", Thread.currentThread().name)
-
-
-        GlobalScope.launch(Dispatchers.IO) {
-            Log.d("FirstG------------->", Thread.currentThread().name)
-            val call = doCall()
-            yield()
-            Log.d("suspend fun", call)
-
-
-
-            CoroutineScope(Dispatchers.Main).launch {
-                Log.d("SecondG--------------->>", Thread.currentThread().name)
-                bind.text.setText("Call")
-
-            }
-
-
-            GlobalScope.launch {
-                Log.d("Scope/------->", "LAunch")
-            }
-
-            withContext(Dispatchers.Main) {
-                //Name of thread-main
-                Log.d("THirdContext--------------->>", Thread.currentThread().name)
-
-                Log.d("Third--------------->>", call)
-                bind.text.setText(call)
-            }
-
-            withContext(Dispatchers.Main) {
-                //Name of thread-main
-                Log.d("lastContext--------------->>", Thread.currentThread().name)
-
-            }
-
-
-            CoroutineScope(Dispatchers.Main).launch {
-                Log.d("FourthCoroutine-------------->>", Thread.currentThread().name)
-
-            }
-
-        }
-
-
-//runBlocking {
-//    GlobalScope.launch {
-//        Log.d("GLobal1-------->", "GLobal")
-//    }
-//
-//    CoroutineScope(Dispatchers.Main).launch {
-//        Log.d("Scope-------->", "Coroutine Scope")
-//    }
-//}
-//
-//
-//    GlobalScope.launch {
-//        delay(1000)
-//        Log.d("GLobal2-------->", "GLobal")
-//    }
-
-        Log.d("mainThread--------------->>", Thread.currentThread().name)
-        }
-
-
-    private suspend fun doCall(): String {
-
-        delay(1000)
-        return "This is n/w calling"
     }
+
+
+//    runBlocking{
+//        launch {
+//            delay(8000)
+//           // job.cancel()
+//            Log.d("GLobal2-------->", "GLobal")
+//        }
+//    }
+
+
 }
+
+
+private suspend fun doCall1(): String {
+
+    delay(2000)
+    return "This is n/w calling1"
+}
+
+private suspend fun doCall2(): String {
+
+    delay(2000)
+    return "This is n/w calling2"
+}
+
+
+
